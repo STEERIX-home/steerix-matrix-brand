@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>STEERIX 회전 로딩</title>
+<style>
+  :root { --bg: #000000; --fg: #e6efec; --muted: #759495; --line: #22302f; --chip: #0d1414; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg);
+    font: 14px/1.4 "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; }
+  body.light { --bg: #ffffff; --fg: #101615; --muted: #5d6f6f; --line: #cfd8d7; --chip: #f2f5f5; }
+  .stage { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .label { position: fixed; left: 16px; top: 12px; color: var(--muted); font-size: 13px; letter-spacing: 0.04em; }
+  .bar { position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); display: flex; flex-wrap: wrap;
+    gap: 8px; align-items: center; justify-content: center; width: max-content; max-width: calc(100vw - 32px); }
+  .bar button, .bar a { font: inherit; color: var(--fg); background: var(--chip); border: 1px solid var(--line);
+    border-radius: 6px; padding: 6px 12px; cursor: pointer; text-decoration: none; }
+  .bar button[aria-pressed="true"] { border-color: var(--fg); }
+  .bar .sep { width: 1px; height: 22px; background: var(--line); }
+  .bar .swatch { width: 26px; height: 26px; padding: 0; border-radius: 50%; }
+  body.capture .bar, body.capture .label { display: none; }
+  html.clear, html.clear body { background: transparent; }
+
+  .stage svg { display: block; width: min(56vmin, 420px); height: auto; overflow: visible; }
+  .stage svg.wide { width: min(86vw, 960px); }
+  .stage svg[hidden] { display: none; }
+  body.capture .stage svg { width: 100vmin; }
+  body.capture .stage svg.wide { width: 1280px; }</style>
+</head>
+<body>
+<div class="label">STEERIX 회전 · 1.8초 반복 (모였다가 한 바퀴 돌고 다시 벌어짐)</div>
+<div class="stage"><svg class="anim" data-variant="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160" role="img">
+  <title>STEERIX, loading</title>
+  <g class="paint" fill="#00dc7d">
+    <g>
+      <animateTransform attributeName="transform" type="rotate" dur="1.8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.26;0.72;1" values="0 80 80;0 80 80;360 80 80;360 80 80" keySplines="0 0 1 1;0.65 0 0.35 1;0 0 1 1" />
+      <polygon points="38,42 52,42 80,80 66,80 73,89 59,110 44,110 62,85 25,85 30,75 62,75">
+        <animateTransform attributeName="transform" type="translate" dur="1.8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.26;0.72;1" values="0 0;7 0;7 0;0 0" keySplines="0.4 0 0.2 1;0 0 1 1;0.4 0 0.2 1" />
+      </polygon>
+      <polygon points="122,118 108,118 80,80 94,80 87,71 101,50 116,50 98,75 135,75 130,85 98,85">
+        <animateTransform attributeName="transform" type="translate" dur="1.8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.26;0.72;1" values="0 0;-7 0;-7 0;0 0" keySplines="0.4 0 0.2 1;0 0 1 1;0.4 0 0.2 1" />
+      </polygon>
+    </g>
+  </g>
+</svg>
+</div>
+<div class="bar"><button class="swatch" data-group="colour" data-colour="green" title="초록" aria-label="초록" aria-pressed="true" style="background:#00dc7d"></button><button class="swatch" data-group="colour" data-colour="white" title="흰색" aria-label="흰색" aria-pressed="false" style="background:#ffffff"></button><button class="swatch" data-group="colour" data-colour="black" title="검정" aria-label="검정" aria-pressed="false" style="background:#000000"></button><span class="sep"></span><button data-group="bg" data-bg="black" aria-pressed="true">검정 배경</button><button data-group="bg" data-bg="white" aria-pressed="false">흰 배경</button></div>
+<script>
+const q = new URLSearchParams(location.search);
+if (q.has('capture')) document.body.classList.add('capture');
+if (q.get('bg') === 'transparent') document.documentElement.classList.add('clear');
+function press(group, button) {
+  document.querySelectorAll('[data-group="' + group + '"]').forEach((b) => b.setAttribute('aria-pressed', String(b === button)));
+}
+document.querySelectorAll('[data-bg]').forEach((b) => b.addEventListener('click', () => {
+  document.body.classList.toggle('light', b.dataset.bg === 'white'); press('bg', b);
+}));
+
+const svgs = [...document.querySelectorAll('svg.anim')];
+
+function paint(key) {
+  const fill = { green: '#00dc7d', white: '#ffffff', black: '#000000' }[key];
+  if (fill) svgs[0].querySelector('.paint').setAttribute('fill', fill);
+}
+document.querySelectorAll('[data-colour]').forEach((b) => b.addEventListener('click', () => { paint(b.dataset.colour); press('colour', b); }));
+document.querySelectorAll('[data-variant]').forEach((b) => b.addEventListener('click', () => {
+  svgs.forEach((s) => { s.hidden = s.dataset.variant !== b.dataset.variant; }); press('variant', b);
+}));
+if (q.get('variant')) svgs.forEach((s) => { s.hidden = s.dataset.variant !== q.get('variant'); });
+if (q.get('color')) paint(q.get('color'));
+window.renderAt = (ms) => svgs.forEach((s) => { s.pauseAnimations(); s.setCurrentTime(ms / 1000); });
+if (q.has('capture')) svgs.forEach((s) => s.pauseAnimations());
+
+</script>
+</body>
+</html>

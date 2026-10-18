@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160" role="img">
+  <title>STEERIX, loading</title>
+  <g class="paint" fill="#ffffff">
+    <g>
+      <animateTransform attributeName="transform" type="rotate" dur="1.8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.26;0.72;1" values="0 80 80;0 80 80;360 80 80;360 80 80" keySplines="0 0 1 1;0.65 0 0.35 1;0 0 1 1" />
+      <polygon points="38,42 52,42 80,80 66,80 73,89 59,110 44,110 62,85 25,85 30,75 62,75">
+        <animateTransform attributeName="transform" type="translate" dur="1.8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.26;0.72;1" values="0 0;7 0;7 0;0 0" keySplines="0.4 0 0.2 1;0 0 1 1;0.4 0 0.2 1" />
+      </polygon>
+      <polygon points="122,118 108,118 80,80 94,80 87,71 101,50 116,50 98,75 135,75 130,85 98,85">
+        <animateTransform attributeName="transform" type="translate" dur="1.8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.26;0.72;1" values="0 0;-7 0;-7 0;0 0" keySplines="0.4 0 0.2 1;0 0 1 1;0.4 0 0.2 1" />
+      </polygon>
+    </g>
+  </g>
+</svg>
