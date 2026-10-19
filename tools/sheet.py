@@ -9,6 +9,7 @@ from urllib.parse import quote
 
 import anim as A
 import logos as L
+import robotsim as R
 import shapes as S
 
 CSS = '''
@@ -16,6 +17,8 @@ CSS = '''
   --green: #00db89; --light: #f4f7f6; }
 @font-face { font-family: "IBM Plex Sans"; src: url("4-%ED%8F%B0%ED%8A%B8/UI%20%EA%B8%80%EA%BC%B4%20(IBM%20Plex)/IBMPlexSans-Regular-Latin.ttf"); font-weight: 400; }
 @font-face { font-family: "IBM Plex Sans"; src: url("4-%ED%8F%B0%ED%8A%B8/UI%20%EA%B8%80%EA%BC%B4%20(IBM%20Plex)/IBMPlexSans-SemiBold-Latin.ttf"); font-weight: 600; }
+@font-face { font-family: "Inter Tight"; src: url("4-%ED%8F%B0%ED%8A%B8/RobotSim%20%EA%B8%80%EA%BC%B4%20(Inter%20Tight,%20JetBrains%20Mono)/InterTight[wght].ttf"); font-weight: 100 900; }
+@font-face { font-family: "JetBrains Mono"; src: url("4-%ED%8F%B0%ED%8A%B8/RobotSim%20%EA%B8%80%EA%BC%B4%20(Inter%20Tight,%20JetBrains%20Mono)/JetBrainsMono[wght].ttf"); font-weight: 100 800; }
 @font-face { font-family: "STEERIX Logo"; src: url("4-%ED%8F%B0%ED%8A%B8/STEERIX-Logo-Regular.ttf"); }
 @font-face { font-family: "MATRIX Logo"; src: url("4-%ED%8F%B0%ED%8A%B8/MATRIX-Logo-Regular.ttf"); }
 * { box-sizing: border-box; }
@@ -59,6 +62,11 @@ p.lead { margin: 0; max-width: 680px; }
 .tester .out { font-size: clamp(32px, 7vw, 72px); line-height: 1.25; margin: 16px 0 4px; overflow-wrap: anywhere; }
 .tester .s { font-family: "STEERIX Logo"; }
 .tester .m { font-family: "MATRIX Logo"; }
+.rs { background: #07090b; border: 1px solid var(--line); border-radius: 10px; padding: 20px; margin-top: 16px; }
+.rs .h { font-family: "Inter Tight"; font-weight: 800; font-size: clamp(30px, 5vw, 54px); line-height: 1.05; letter-spacing: -0.03em; color: #e9eff1; }
+.rs .h span { color: #5ef2c2; }
+.rs .b { font-family: "Inter Tight"; font-size: 17px; color: #8d9ca3; margin-top: 12px; }
+.rs .m { font-family: "JetBrains Mono"; font-size: 13px; letter-spacing: 0.08em; color: #5ef2c2; margin-top: 14px; }
 button.replay { font: inherit; font-size: 12px; color: var(--fg); background: var(--raised); border: 1px solid var(--line);
   border-radius: 999px; padding: 3px 10px; cursor: pointer; }
 footer { margin-top: 64px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); padding-top: 16px; }
@@ -66,7 +74,23 @@ footer { margin-top: 64px; color: var(--muted); font-size: 13px; border-top: 1px
 
 
 A_COLOURWAYS = {k: list(v) for k, v in S.COLOURS.items()}
-CW_LABEL = {'white': '흰색', 'black': '검정', 'green': '초록', 'green-x': '초록 X', 'black-green-x': '검정 + 초록 X'}
+CW_LABEL = {'white': '흰색', 'black': '검정', 'green': '초록', 'green-x': '초록 X', 'black-green-x': '검정 + 초록 X',
+            'mint': '민트 (사이트)', 'black-mint': '검정 + 민트 마크'}
+
+
+def robotsim_card(name, title, note, previews):
+    """RobotSim files: PNG and SVG in every colourway, PDF and AI for all but white (no EPS: the mark has transparency)."""
+    d = Path(R.DIRS[name])
+    ways = R.LOGOS[name][1]
+    files = [(f'PNG {CW_LABEL[cw]}', d / f'{name}-{cw}.png', cw == ways[0]) for cw in ways]
+    files += [(f'SVG {CW_LABEL[cw]}', d / f'{name}-{cw}.svg', False) for cw in ways]
+    for cw in ways:
+        if cw != 'white':
+            files += [(f'AI {CW_LABEL[cw]}', d / f'{name}-{cw}.ai', False), (f'PDF {CW_LABEL[cw]}', d / f'{name}-{cw}.pdf', False)]
+    view = '<div class="view pair">' + ''.join(
+        f'<div style="background:{bg}"><img src="{href(d / f"{name}-{cw}.png")}" alt="{title} {CW_LABEL[cw]}"></div>'
+        for cw, bg in previews) + '</div>'
+    return f'<article class="card">{view}<div class="body"><h3>{title}</h3><p class="muted">{note}</p>{links(files)}</div></article>'
 
 
 def href(path):
@@ -130,6 +154,22 @@ def build():
     ])
     matrix_light = logo_card('matrix-logo', '로고 — 밝은 배경', '검정 글자, 또는 검정 글자 + 초록 X.',
                              [('black', '#f4f7f6'), ('black-green-x', '#f4f7f6')], only=('black', 'black-green-x'))
+    robotsim = ''.join([
+        robotsim_card('robotsim-logo', '로고 (마크 + RobotSim)', '사이트 머리글과 같은 로고. 민트는 사이트 그대로(마크 #5EF2C2, 글자 #E9EFF1)이고 어두운 배경용입니다.',
+                      [('mint', '#07090b'), ('black-mint', '#f4f7f6')]),
+        robotsim_card('robotsim-logo-by-steerix', '로고 + by Steerix', '사이트 머리글 전체(by Steerix #8D9CA3). 데스크톱 머리글, 영상 엔드카드, 공유 이미지에 씁니다.',
+                      [('mint', '#07090b'), ('black-mint', '#f4f7f6')]),
+        robotsim_card('robotsim-mark', '큐브 마크', '파비콘과 같은 모양. 옆면은 45% 투명입니다.', [('mint', '#07090b'), ('white', '#000')]),
+    ])
+    rs_colours = [('#5EF2C2', 'RobotSim 민트', '마크, 강조, 버튼'), ('#E9EFF1', '글자', 'RobotSim, 제목'),
+                  ('#8D9CA3', '보조 글자', 'by Steerix, 설명'), ('#07090B', '배경', '사이트 바탕')]
+    rs_sw = ''.join(f'<div class="swatch"><div style="background:{c}"></div><p><code>{c}</code><br>{n}<br><span class="muted">{u}</span></p></div>'
+                    for c, n, u in rs_colours)
+    rs_fonts = Path('4-폰트') / 'RobotSim 글꼴 (Inter Tight, JetBrains Mono)'
+    rs_font_links = links([('Inter Tight (TTF, 가변)', rs_fonts / 'InterTight[wght].ttf', True),
+                           ('JetBrains Mono (TTF, 가변)', rs_fonts / 'JetBrainsMono[wght].ttf', True),
+                           ('OFL 라이선스 (Inter Tight)', rs_fonts / 'InterTight-OFL.txt', False),
+                           ('OFL 라이선스 (JetBrains Mono)', rs_fonts / 'JetBrainsMono-OFL.txt', False)])
     colours = [('#FFFFFF', '로고 흰색', '어두운 배경의 로고'), ('#000000', '로고 검정 · 인트로 배경', '밝은 배경의 로고'),
                ('#00DB89', 'MATRIX X 초록', 'ready · 파비콘'), ('#00DC7D', 'STEERIX 초록', '앱의 STEERIX 심볼'),
                ('#E6EFEC', 'MATRIX 글자 (앱)', '앱 헤더의 MATRI'), ('#53C1DB', '하늘색 · 작업 중', '앱 로딩 아이콘'),
@@ -206,6 +246,12 @@ def build():
 <p class="lead">MATRIX의 X는 글자가 아니라 마크입니다. 초록 X는 앱의 ready 색 #00DB89입니다.</p>
 <div class="grid">{matrix}{matrix_light}</div>
 
+<h2>RobotSim</h2>
+<p class="lead">STEERIX의 real-to-sim 서비스(robotsim.dev). 로고는 사이트 머리글 그대로입니다: 큐브 마크와 Inter Tight 글자, 머리글의 크기와 간격 그대로. RobotSim의 모든 화면, 영상, 이미지는 <b>Inter Tight</b>(제목·본문)와 <b>JetBrains Mono</b>(작은 라벨·수치) 두 글꼴로 통일합니다. 이름은 항상 RobotSim(R과 S만 대문자, 붙여 씀)으로 씁니다.</p>
+<div class="grid">{robotsim}</div>
+<div class="swatches">{rs_sw}</div>
+<div class="rs"><div class="h">Send us your space.<br><span>Get it back sim-ready.</span></div><div class="b">Inter Tight 800 제목 · 400 본문. 로고의 RobotSim은 700, by Steerix는 500입니다.</div><div class="m">JETBRAINS MONO · SAMPLE IN 48 H · INTERNAL LAB DEMO</div>{rs_font_links}</div>
+
 <h2>색</h2>
 <p class="lead">로고는 흰색·검정이 기본이고, 초록과 상태 색은 MATRIX 앱에서 쓰는 값입니다.</p>
 <div class="swatches">{sw}</div>
@@ -223,7 +269,7 @@ def build():
 <p class="lead">HTML은 브라우저에서 바로 재생됩니다. MP4·GIF는 검은 배경, MOV는 배경이 투명해서 영상 편집에 바로 얹을 수 있습니다(ProRes 4444). SVG는 웹페이지에 이미지로 넣으면 그대로 움직입니다. 로딩 MP4는 약 10초 반복이고, GIF·MOV·SVG는 한 주기라 이어 붙이면 끊김 없이 반복됩니다.</p>
 <div class="grid wide">{anims}</div>
 
-<footer>2026-10-18 · 원본: MATRIX 앱 web/src/brand (matrix-logo.js, steerix_loading_motion.cpp 이식본), web/public/brand/startup-intro.svg (STEERIX_to_MATRIX_Burst.svg)</footer>
+<footer>2026-10-18 (RobotSim 추가 2026-10-19) · 원본: MATRIX 앱 web/src/brand (matrix-logo.js, steerix_loading_motion.cpp 이식본), web/public/brand/startup-intro.svg (STEERIX_to_MATRIX_Burst.svg)</footer>
 </main>
 <script>
 const input = document.getElementById('type');

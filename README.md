@@ -5,7 +5,7 @@
   </picture>
 </p>
 
-# STEERIX · MATRIX 브랜드 자료
+# STEERIX · MATRIX · RobotSim 브랜드 자료
 
 로고, 색, 폰트, 전환·로딩 애니메이션을 한곳에 모았습니다. 저장소를 내려받아 `브랜드시트.html`을 브라우저로 열면 전체를 미리 보고 각 파일을 바로 열 수 있습니다. 파일별 설명은 [안내.md](%EC%95%88%EB%82%B4.md)에 있습니다.
 
@@ -21,10 +21,12 @@
 
 - **1-STEERIX**: 로고(심볼+글자), 심볼(그림만), 글자만, 앱 아이콘. PNG(배경 투명) · SVG · AI · PDF · EPS
 - **2-MATRIX**: 로고(MATRIX 전체 글자), X 로고만. 흰색 · 검정 · 초록 X(#00DB89)
+- **5-RobotSim**: robotsim.dev 머리글과 같은 큐브 마크 + RobotSim 로고(+ by Steerix). 민트 · 흰색 · 검정 · 검정 + 민트 마크. PNG · SVG · PDF · AI
 - **3-애니메이션**: 전환 2종과 로딩 3종. HTML · MP4 · GIF · 투명 MOV(ProRes 4444) · SVG
 - **4-폰트**:
   - STEERIX Logo, MATRIX Logo: 로고 글자만 담은 폰트
   - IBM Plex: 앱 화면 글꼴, OFL 라이선스
+  - RobotSim 글꼴: Inter Tight · JetBrains Mono (가변 TTF), OFL 라이선스
 
 ## 원본
 
