@@ -20,7 +20,7 @@ from pathlib import Path
 
 from websockets.asyncio.client import connect
 
-SHELL = os.path.expanduser('~/.cache/ms-playwright/chromium_headless_shell-1194/chrome-linux/headless_shell')
+SHELL = os.environ.get('CHROME_SHELL') or os.path.expanduser('~/.cache/ms-playwright/chromium_headless_shell-1194/chrome-linux/headless_shell')
 
 
 def free_port():

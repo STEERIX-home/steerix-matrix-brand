@@ -14,6 +14,7 @@
     python3 anim.py OUT_DIR
 """
 import math
+import os
 import sys
 from pathlib import Path
 
@@ -21,7 +22,7 @@ import shapes as S
 import vec
 
 G = S.G
-WEB = Path('~/matrix_reboot/web').expanduser()
+WEB = Path(os.environ.get('MATRIX_WEB', '~/matrix_reboot/web')).expanduser()
 ORIGINAL = (WEB / 'public/brand/startup-intro.svg').read_text()
 MONO_WOFF2 = WEB / 'node_modules/@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-400-normal.woff2'
 DIRS = {1: '3-애니메이션/1-전환-STEERIX에서-MATRIX로', 2: '3-애니메이션/2-전환-MATRIX에서-STEERIX로',
